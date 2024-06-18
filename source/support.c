@@ -14,6 +14,8 @@ char* padding(char *filename){
 
 
 //	char output[11];
+
+	// TODO: Add wrapper around this so that it isn't so fucking egregious
 	/*
 	 * NOTE - Modificação
 	 * Motivo: Retornando por ponteiro variável de Stack

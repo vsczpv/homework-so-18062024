@@ -21,7 +21,7 @@ off_t fsize(const char *filename){
 }
 
 struct fat_dir find(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb){
-    struct fat_dir curdir; // suspeito
+    struct fat_dir curdir; // TODO: Fix this ub
     int dirs_len = sizeof(struct fat_dir) * bpb->possible_rentries;
     int i;
 
