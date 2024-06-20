@@ -7,6 +7,10 @@
 #include "fat16.h"
 #include "support.h"
 
+#include <errno.h>
+#include <err.h>
+#include <error.h>
+
 /*
  * NOTE - Modificação
  * Motivo: off_t não definido
@@ -111,9 +115,54 @@ int wipe(FILE *fp, struct fat_dir *dir, struct fat_bpb *bpb){
 void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)
 {
 
-	(void) fp, (void) source, (void) dest, (void) bpb;
+    printf("mv %s → %s.\n", source, dest);
 
-    ;; /* TODO */
+    char source_rname[12], dest_rname[12];
+
+    bool badname = better_padding(source, source_rname)
+                || better_padding(dest,   dest_rname);
+
+    if (badname)
+    {
+        fprintf(stderr, "Nome de arquivo inválido.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    uint32_t root_address = bpb_froot_addr(bpb);
+
+    struct fat_dir root[16];
+
+    if (read_bytes(fp, root_address, &root, sizeof(struct fat_dir) * 16) != 0)
+            error_at_line(EXIT_FAILURE, EINVAL, __FILE__, __LINE__, "erro ao ler struct fat_dir");
+
+    struct far_dir_searchres dir1 = find(&root[0], source_rname, bpb);
+    struct far_dir_searchres dir2 = find(&root[0], dest_rname,   bpb);
+
+    if (dir2.found == true)
+    {
+        fprintf(stderr, "Não permitido substituir arquivo %s via mv.\n", dest);
+        exit(EXIT_FAILURE);
+    }
+
+    if (dir1.found == false) {
+        fprintf(stderr, "Não foi possivel encontrar o arquivo %s.\n", source);
+        exit(EXIT_FAILURE);
+    }
+
+	memcpy(dir1.fdir.name, dest_rname, sizeof(char) * 11);
+
+	uint32_t source_address = sizeof (struct fat_dir) * dir1.idx + root_address;
+
+	(void) fseek (fp, source_address, SEEK_SET);
+	(void) fwrite
+	(
+		&dir1.fdir,
+		sizeof (struct fat_dir),
+		1,
+		fp
+	);
+
+	return;
 }
 
 void rm(FILE *fp, char *filename, struct fat_bpb *bpb)
