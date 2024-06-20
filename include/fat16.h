@@ -18,18 +18,18 @@
 
 #pragma pack(push, 1)
 struct fat_dir {
-    unsigned char name[11]; /* Short name + file extension */
-    uint8_t attr; /* file attributes */
-    uint8_t ntres; /* reserved for Windows NT, Set value to 0 when a file is created. */
-    uint8_t creation_stamp; /* milisecond timestamp at file creation time */;
-    uint16_t creation_time; /* time file was created */
-    uint16_t ctreation_date; /* date file was created */
-    uint16_t last_access_date; /* last access date (last read/written) */
-    uint16_t reserved_fat32; /* reserved for fat32 */
-    uint16_t last_write_time; /* time of last write */
-    uint16_t last_write_date; /* date of last write */
-    uint16_t starting_cluster; /* starting cluster */
-    uint32_t file_size; /* 32-bit */
+	unsigned char name[11]; /* Short name + file extension */
+	uint8_t attr; /* file attributes */
+	uint8_t ntres; /* reserved for Windows NT, Set value to 0 when a file is created. */
+	uint8_t creation_stamp; /* milisecond timestamp at file creation time */;
+	uint16_t creation_time; /* time file was created */
+	uint16_t ctreation_date; /* date file was created */
+	uint16_t last_access_date; /* last access date (last read/written) */
+	uint16_t reserved_fat32; /* reserved for fat32 */
+	uint16_t last_write_time; /* time of last write */
+	uint16_t last_write_date; /* date of last write */
+	uint16_t starting_cluster; /* starting cluster */
+	uint32_t file_size; /* 32-bit */
 };
 
 /* Boot Sector and BPB
@@ -37,22 +37,22 @@ struct fat_dir {
  * AKA as the boot sector, reserved sector or even the "0th" sector.
  */
 struct fat_bpb { /* bios Parameter block */
-    uint8_t jmp_instruction[3]; /* code to jump to the bootstrap code */
-    unsigned char oem_id[8]; /* Oem ID: name of the formatting OS */
+	uint8_t jmp_instruction[3]; /* code to jump to the bootstrap code */
+	unsigned char oem_id[8]; /* Oem ID: name of the formatting OS */
 
-    uint16_t bytes_p_sect; /* bytes per sector */
-    uint8_t sector_p_clust; /* sector per cluster */
-    uint16_t reserved_sect; /* reserved sectors */
-    uint8_t n_fat; /* number of FAT copies */
-    uint16_t possible_rentries; /* number of possible root entries */
-    uint16_t snumber_sect; /* small number of sectors */
+	uint16_t bytes_p_sect; /* bytes per sector */
+	uint8_t sector_p_clust; /* sector per cluster */
+	uint16_t reserved_sect; /* reserved sectors */
+	uint8_t n_fat; /* number of FAT copies */
+	uint16_t possible_rentries; /* number of possible root entries */
+	uint16_t snumber_sect; /* small number of sectors */
 
-    uint8_t media_desc; /* media descriptor */
-    uint16_t sect_per_fat; /* sector per FAT */
-    uint16_t sect_per_track; /* sector per track */
-    uint16_t number_of_heads; /* number of heads */
-    uint32_t hidden_sects; /* hidden sectors */
-    uint32_t large_n_sects; /* large number of sectors */
+	uint8_t media_desc; /* media descriptor */
+	uint16_t sect_per_fat; /* sector per FAT */
+	uint16_t sect_per_track; /* sector per track */
+	uint16_t number_of_heads; /* number of heads */
+	uint32_t hidden_sects; /* hidden sectors */
+	uint32_t large_n_sects; /* large number of sectors */
 };
 /*
  * NOTE - Modificação
