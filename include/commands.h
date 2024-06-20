@@ -26,7 +26,8 @@ void rm(FILE *, char *, struct fat_bpb *);
 /* copy the file to the fat directory */
 void cp(FILE *fp, char *filename, struct fat_bpb *bpb);
 
+/* NOTE - Modificado */
 /* helper function: find specific filename in fat_dir */
-struct fat_dir find(struct fat_dir *, char *, struct fat_bpb *);
+struct far_dir_searchres find(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb);
 
 #endif

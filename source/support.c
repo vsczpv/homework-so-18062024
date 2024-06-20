@@ -9,6 +9,21 @@
  */
 #include <ctype.h>
 
+#include <stdbool.h>
+
+/* NOTE - Gambiarra */
+bool better_padding(char* filename, char out[12])
+{
+
+    char* res = padding(filename);
+
+    if (res == NULL) return true;
+
+    memcpy(out, res, sizeof(char) * 12);
+
+    return false;
+}
+
 /* Manipulate the path to lead com name, extensions and special characters */
 char* padding(char *filename){
 
@@ -26,6 +41,8 @@ char* padding(char *filename){
     char* strptr = filename;
     char* dot;
     dot = strchr(filename, '.');
+
+    if (dot == NULL) return NULL;
 
     int i;
     for(i=0; strptr != dot; strptr++, i++){

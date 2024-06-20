@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <stdbool.h>
 #include "commands.h"
 #include "fat16.h"
 #include "support.h"
@@ -20,18 +21,35 @@ off_t fsize(const char *filename){
     return -1;
 }
 
-struct fat_dir find(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb){
-    struct fat_dir curdir; // TODO: Fix this ub
-    int dirs_len = sizeof(struct fat_dir) * bpb->possible_rentries;
-    int i;
+/*
+ * NOTE - Modificação
+ *
+ * Motivo: É necessário representar o estado no qual o find não achou o arquivo.
+ */
 
-    for (i=0; i < dirs_len; i++){
+struct far_dir_searchres {
+    struct fat_dir fdir;
+    bool          found;
+	int             idx;
+};
+
+struct far_dir_searchres find(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb){
+
+	(void) bpb;
+
+    struct far_dir_searchres res = { .found = false };
+
+    for (int i = 0; i < 16; i++) {
+        if (dirs[i].name[0] == '\0') continue;
         if (strcmp((char *) dirs[i].name, filename) == 0){
-            curdir = dirs[i];
+            res.found = true;
+            res.fdir  = dirs[i];
+			res.idx   = i;
             break;
         }
     }
-    return curdir;
+
+    return res;
 }
 
 struct fat_dir *ls(FILE *fp, struct fat_bpb *bpb){
@@ -45,6 +63,10 @@ struct fat_dir *ls(FILE *fp, struct fat_bpb *bpb){
     return dirs;
 }
 
+/*
+ * NOTE - Remoção
+ * Motivo: Fazer na mão é mais facíl.
+ *
 int write_dir(FILE *fp, char *fname, struct fat_dir *dir){
     char* name = padding(fname);
     strcpy((char *) dir->name, (char *) name);
@@ -52,6 +74,7 @@ int write_dir(FILE *fp, char *fname, struct fat_dir *dir){
         return -1;
     return 0;
 }
+*/
 
 int write_data(FILE *fp, char *fname, struct fat_dir *dir, struct fat_bpb *bpb){
 
