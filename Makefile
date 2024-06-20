@@ -17,6 +17,9 @@ all: $(NAME)
 builddir:
 	@if [ ! -d "build" ] ; then mkdir build ; fi
 
+resetimg:
+	cp -v backup.img disk.img
+
 $(OBJS): $(BUILD)/%.o: $(SOURCE)/%.c $(HEADERS)
 	$(CC) -c $(CARGS) $< -o $@
 
