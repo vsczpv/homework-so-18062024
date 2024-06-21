@@ -165,7 +165,7 @@ void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)
 	return;
 }
 
-void rm(FILE *fp, char *filename, struct fat_bpb *bpb)
+void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
 {
 
 	(void) fp, (void) filename, (void) bpb;

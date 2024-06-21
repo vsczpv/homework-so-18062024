@@ -14,15 +14,14 @@ void show_files(struct fat_dir *dirs){
     }
 }
 
-void verbose(struct fat_bpb *bios_pb){
-    int i;
+void verbose(struct fat_bpb *bios_pb)
+{
 
     fprintf(stdout, "Bios parameter block:\n");
     fprintf(stdout, "Jump instruction: ");
 
-    for (i=0; i < 3; i++){
+    for (int i = 0; i < 3; i++)
         fprintf(stdout, "%hhX ", bios_pb->jmp_instruction[i]);
-    }
 
     fprintf(stdout, "\n");
 
@@ -42,4 +41,6 @@ void verbose(struct fat_bpb *bios_pb){
     fprintf(stdout, "FAT Address: 0x%x\n", bpb_faddress(bios_pb));
     fprintf(stdout, "Root Address: 0x%x\n", bpb_froot_addr(bios_pb));
     fprintf(stdout, "Data Address: 0x%x\n", bpb_fdata_addr(bios_pb));
+
+	return;
 }
