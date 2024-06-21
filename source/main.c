@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 		rfat(fp, &bpb);
 		char *command = argv[1];
 
+//		verbose(&bpb);
 
 		if (strcmp(command, "ls") == 0)
 		{

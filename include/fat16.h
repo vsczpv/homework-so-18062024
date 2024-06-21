@@ -70,4 +70,12 @@ uint32_t bpb_froot_addr(struct fat_bpb *);
 uint32_t bpb_fdata_addr(struct fat_bpb *);
 uint32_t bpb_fdata_sector_count(struct fat_bpb *);
 
+///
+
+#define FAT16STR_SIZE       11
+#define FAT16STR_SIZE_WNULL 12
+
+#define RB_ERROR -1
+#define RB_OK     0
+
 #endif

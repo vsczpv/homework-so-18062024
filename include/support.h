@@ -2,8 +2,8 @@
 #define SUPPORT_H
 
 #include <stdbool.h>
+#include "fat16.h"
 
-bool better_padding(char* filename, char out[12]);
-char* padding(char *filename);
+bool cstr_to_fat16wnull(char *filename, char output[FAT16STR_SIZE_WNULL]);
 
 #endif

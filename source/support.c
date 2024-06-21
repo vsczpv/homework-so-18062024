@@ -10,39 +10,26 @@
 #include <ctype.h>
 
 #include <stdbool.h>
+#include "fat16.h"
 
-/* NOTE - Gambiarra */
-bool better_padding(char* filename, char out[12])
-{
-
-	char* res = padding(filename);
-
-	if (res == NULL) return true;
-
-	memcpy(out, res, sizeof(char) * 12);
-
-	return false;
-}
+/*
+ * NOTE - Modificação
+ * Motivo: Retornando por ponteiro variável de Stack
+ *         Guardando 12 bytes em array de 11.
+ *         Sem detecção de erro.
+ *         Nome não fazia juz a função.
+ */
 
 /* Manipulate the path to lead com name, extensions and special characters */
-char* padding(char *filename){
+bool cstr_to_fat16wnull(char *filename, char output[FAT16STR_SIZE_WNULL])
+{
 
 
-	//	char output[11];
-
-	// TODO: Add wrapper around this so that it isn't so fucking egregious
-	/*
-	 * NOTE - Modificação
-	 * Motivo: Retornando por ponteiro variável de Stack
-	 *         Guardando 12 bytes em array de 11.
-	 * diff: char output[11] → static char output[12]
-	 */
-	static char output[12];
 	char* strptr = filename;
 	char* dot;
 	dot = strchr(filename, '.');
 
-	if (dot == NULL) return NULL;
+	if (dot == NULL) return true;
 
 	int i;
 	for(i=0; strptr != dot; strptr++, i++){
@@ -67,7 +54,5 @@ char* padding(char *filename){
 		output[i] = toupper(output[i]);
 	}
 
-	char* out = output;
-	return out;
-
+	return false;
 }
