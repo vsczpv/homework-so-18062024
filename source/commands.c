@@ -31,11 +31,9 @@
 struct far_dir_searchres find_in_root(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb)
 {
 
-	(void) bpb;
-
 	struct far_dir_searchres res = { .found = false };
 
-	for (size_t i = 0; i < sizeof (struct fat_dir) * bpb->possible_rentries; i++)
+	for (size_t i = 0; i < bpb->possible_rentries; i++)
 	{
 
 		/*
