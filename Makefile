@@ -18,13 +18,15 @@ builddir:
 	@if [ ! -d "build" ] ; then mkdir build ; fi
 
 resetimg:
-	cp -v backup.img disk.img
+	@cp -v backup.img disk.img
 
 $(OBJS): $(BUILD)/%.o: $(SOURCE)/%.c $(HEADERS)
-	$(CC) -c $(CARGS) $< -o $@
+	@$(CC) -c $(CARGS) $< -o $@
+	@echo 'CC   ' $<
 
 clean:
-	rm -vf $(NAME) $(UBJS) $(OBJS)
+	@rm -vf $(NAME) $(UBJS) $(OBJS)
 
 $(NAME): builddir $(OBJS)
-	$(CC) $(CARGS) $(OBJS) -o $@
+	@$(CC) $(CARGS) $(OBJS) -o $@
+	@echo 'CCLD ' $(NAME)
