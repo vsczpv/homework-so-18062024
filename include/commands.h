@@ -30,9 +30,8 @@ void mv(FILE* fp, char* source, char* dest, struct fat_bpb* bpb);
 /* delete the file from the fat directory */
 void rm(FILE* fp, char* filename, struct fat_bpb* bpb);
 
-// TODO
 /* copy the file to the fat directory */
-void cp(FILE* fp, char* filename, struct fat_bpb* bpb);
+void cp(FILE* fp, char* source, char* dest, struct fat_bpb* bpb);
 
 /*
  * NOTE - Funcionalidade nova
