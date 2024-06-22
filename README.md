@@ -57,6 +57,7 @@ $ ./obese16 cat teste.txt disk.img
 
 # Guia Documentação
 
-To be Written.
+Veja na pasta `docs/` os arquivos `FAT16.md`, `API.md` e `Guia.md`. O código em
+sí também foi altamente documentado.
 
-Veja `source/commands.c : void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)` e `source/commands.c : void cat(FILE *fp, char *filename, struct fat_bpb *bpb)`.
+O arquivo para implementação das funções é o `source/commands.c`.
