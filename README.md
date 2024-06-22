@@ -31,8 +31,9 @@ Veja [Como instalar o Linux no Windows com o WSL](https://learn.microsoft.com/pt
 
 Os seguintes comandos foram implementados:
 
-1. Listar -- ls
-2. Mover  -- mv
+1. Listar   -- ls
+2. Mover    -- mv
+3. Imprimir -- cat
 
 # Exemplos
 
@@ -45,11 +46,17 @@ $ ./obese16 ls disk.img
 Para mover um arquivo:
 
 ```
-$ ./obese16 mv test.txt other.exe disk.img
+$ ./obese16 mv teste.txt other.exe disk.img
+```
+
+Para imprimir um arquivo:
+
+```
+$ ./obese16 cat teste.txt disk.img
 ```
 
 # Guia Documentação
 
 To be Written.
 
-Veja `source/commands.c : void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)`.
+Veja `source/commands.c : void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)` e `source/commands.c : void cat(FILE *fp, char *filename, struct fat_bpb *bpb)`.
