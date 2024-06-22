@@ -58,9 +58,14 @@ int main(int argc, char **argv)
 			show_files(dirs);
 		}
 
+		/*
+		 * NOTE - Modificação
+		 * Motivo: caminho 'dest' faltando.
+		 * Diff: mv(fp, argv[2], &bpb) → mv(fp, argv[2], argv[3], &bpb);
+		 */
 		if (strcmp(command, "cp") == 0)
 		{
-			cp(fp, argv[2], &bpb);
+			cp(fp, argv[2], argv[3], &bpb);
 			fclose(fp);
 		}
 
