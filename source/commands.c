@@ -18,6 +18,8 @@
  */
 #include <sys/types.h>
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 /*
  * NOTE - Modificação
  *
@@ -133,7 +135,7 @@ void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)
 	struct fat_dir root[root_size];
 
 	if (read_bytes(fp, root_address, &root, root_size) == RB_ERROR)
-		error_at_line(EXIT_FAILURE, EINVAL, __FILE__, __LINE__, "erro ao ler struct fat_dir");
+		error_at_line(EXIT_FAILURE, EIO, __FILE__, __LINE__, "erro ao ler struct fat_dir");
 
 	/*
 	 * Então é usado a função find_in_root() para tentar achar alguma entrada
@@ -200,6 +202,87 @@ void cp(FILE *fp, char *filename, struct fat_bpb *bpb)
 	(void) fp, (void) filename, (void) bpb;
 
 	;; /* TODO */
+}
+
+void cat(FILE* fp, char* filename, struct fat_bpb* bpb)
+{
+
+	/*
+	 * Leitura do diretório raiz explicado em mv().
+	 */
+
+	char rname[FAT16STR_SIZE_WNULL];
+
+	bool badname = cstr_to_fat16wnull(filename, rname);
+
+	if (badname)
+	{
+		fprintf(stderr, "Nome de arquivo inválido.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	uint32_t root_address = bpb_froot_addr(bpb);
+	uint32_t root_size    = sizeof (struct fat_dir) * bpb->possible_rentries;
+
+	struct fat_dir root[root_size];
+
+	if (read_bytes(fp, root_address, &root, root_size) == RB_ERROR)
+		error_at_line(EXIT_FAILURE, EIO, __FILE__, __LINE__, "erro ao ler struct fat_dir");
+
+	struct far_dir_searchres dir = find_in_root(&root[0], rname, bpb);
+
+	if (dir.found == false)
+		error(EXIT_FAILURE, 0, "Não foi possivel encontrar o %s.", filename);
+
+	/*
+	 * Descobre-se quantos bytes o arquivo tem
+	 */
+	size_t   bytes_to_read     = dir.fdir.file_size;
+
+	/*
+	 * Endereço da região de dados e da tabela de alocação.
+	 */
+	uint32_t data_region_start = bpb_fdata_addr(bpb);
+	uint32_t fat_address       = bpb_faddress(bpb);
+
+	/*
+	 * O primeiro cluster do arquivo esta guardado na struct fat_dir.
+	 */
+	uint16_t cluster_number    = dir.fdir.starting_cluster;
+
+	while (bytes_to_read != 0)
+	{
+
+		/* read */
+		{
+
+			/* Onde em disco está o cluster atual */
+			uint32_t cluster_address     = (cluster_number - 2) * bpb->bytes_p_sect + data_region_start;
+
+			/* Devemos ler no máximo bpb->bytes_p_sect. */
+			size_t   read_in_this_sector = MIN(bytes_to_read, bpb->bytes_p_sect);
+
+			char filedata[bpb->bytes_p_sect];
+
+			/* Lemos o cluster atual */
+			read_bytes(fp, cluster_address, filedata, read_in_this_sector);
+			printf("%.*s", (signed) read_in_this_sector, filedata);
+
+			bytes_to_read -= read_in_this_sector;
+		}
+
+		/*
+		 * Calculamos o endereço, na tabela de alocação, de onde está a entrada
+		 * que diz qual é o próximo cluster.
+		 */
+		uint32_t next_cluster_address = fat_address + cluster_number * sizeof (uint16_t);
+
+		/* Lemos esta entrada, assim descobrindo qual é o próximo cluster. */
+		read_bytes(fp, next_cluster_address, &cluster_number, sizeof (uint16_t));
+
+	}
+
+	return;
 }
 
 /*

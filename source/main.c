@@ -80,6 +80,14 @@ int main(int argc, char **argv)
 			rm(fp, argv[2], &bpb);
 			fclose(fp);
 		}
+
+		///
+
+		if (strcmp(command, "cat") == 0)
+		{
+			cat(fp, argv[2], &bpb);
+			fclose(fp);
+		}
 	}
 
 	return EXIT_SUCCESS;

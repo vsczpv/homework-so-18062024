@@ -34,6 +34,12 @@ void rm(FILE* fp, char* filename, struct fat_bpb* bpb);
 /* copy the file to the fat directory */
 void cp(FILE* fp, char* filename, struct fat_bpb* bpb);
 
+/*
+ * NOTE - Funcionalidade nova
+ * Esta função escreve no terminal os conteúdos de um arquivo.
+ */
+void cat(FILE* fp, char* filename, struct fat_bpb* bpb);
+
 /* NOTE - Modificado */
 /* helper function: find specific filename in fat_dir */
 struct far_dir_searchres find_in_root(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb);
