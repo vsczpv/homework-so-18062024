@@ -250,6 +250,8 @@ void cat(FILE* fp, char* filename, struct fat_bpb* bpb)
 	 */
 	uint16_t cluster_number    = dir.fdir.starting_cluster;
 
+	const uint32_t cluster_width = bpb->bytes_p_sect * bpb->sector_p_clust;
+
 	while (bytes_to_read != 0)
 	{
 
@@ -257,12 +259,12 @@ void cat(FILE* fp, char* filename, struct fat_bpb* bpb)
 		{
 
 			/* Onde em disco está o cluster atual */
-			uint32_t cluster_address     = (cluster_number - 2) * bpb->bytes_p_sect + data_region_start;
+			uint32_t cluster_address     = (cluster_number - 2) * cluster_width + data_region_start;
 
-			/* Devemos ler no máximo bpb->bytes_p_sect. */
-			size_t   read_in_this_sector = MIN(bytes_to_read, bpb->bytes_p_sect);
+			/* Devemos ler no máximo cluster_width. */
+			size_t read_in_this_sector = MIN(bytes_to_read, cluster_width);
 
-			char filedata[bpb->bytes_p_sect];
+			char filedata[cluster_width];
 
 			/* Lemos o cluster atual */
 			read_bytes(fp, cluster_address, filedata, read_in_this_sector);
