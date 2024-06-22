@@ -8,7 +8,7 @@ Após achar um arquivo, para remove-lo, deve-se:
 
 1. Achar sua entrada(s) na FAT e seta-las como NULL
     * Para arquivos com mais de um cluster, será necessário seguir os ponteiros da FAT. Exemplo de como fazer em código na função `cat()`.
-2. Setar o primeiro caractér do nome do arquivo na como '\0'.
+2. Setar o primeiro caractér do nome do arquivo na como DIR\_FREE\_ENTRY.
 
 Ambas operações irão desalocar o arquivo, deletando-o.
 
