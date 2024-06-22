@@ -21,7 +21,7 @@ struct fat_dir {
 	unsigned char name[11]; /* Short name + file extension */
 	uint8_t attr; /* file attributes */
 	uint8_t ntres; /* reserved for Windows NT, Set value to 0 when a file is created. */
-	uint8_t creation_stamp; /* milisecond timestamp at file creation time */;
+	uint8_t creation_stamp; /* milisecond timestamp at file creation time */
 	uint16_t creation_time; /* time file was created */
 	uint16_t ctreation_date; /* date file was created */
 	uint16_t last_access_date; /* last access date (last read/written) */
