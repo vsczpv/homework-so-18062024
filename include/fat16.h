@@ -78,4 +78,6 @@ uint32_t bpb_fdata_sector_count(struct fat_bpb *);
 #define RB_ERROR -1
 #define RB_OK     0
 
+#define FAT16_USED_LOW 0xfff8
+
 #endif
