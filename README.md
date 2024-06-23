@@ -33,6 +33,7 @@ Os seguintes comandos foram implementados:
 
 1. Listar   -- ls
 2. Mover    -- mv
+3. Remover  -- rm
 3. Imprimir -- cat
 
 # Exemplos
@@ -47,6 +48,12 @@ Para mover um arquivo:
 
 ```
 $ ./obese16 mv teste.txt other.exe disk.img
+```
+
+Para remover um arquivo:
+
+```
+$ ./obese16 rm texto2.txt disk.img
 ```
 
 Para imprimir um arquivo:
