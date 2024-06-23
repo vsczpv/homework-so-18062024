@@ -190,44 +190,44 @@ void mv(FILE *fp, char *source, char* dest, struct fat_bpb *bpb)
 
 void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
 {
-    char fat16_rname[FAT16STR_SIZE_WNULL];
+	char fat16_rname[FAT16STR_SIZE_WNULL];
 
-    // Converte o nome do arquivo para o formato FAT16.
-    if (cstr_to_fat16wnull(filename, fat16_rname))
-    {
-        fprintf(stderr, "Nome de arquivo inválido.\n");
-        exit(EXIT_FAILURE);
-    }
+	// Converte o nome do arquivo para o formato FAT16.
+	if (cstr_to_fat16wnull(filename, fat16_rname))
+	{
+		fprintf(stderr, "Nome de arquivo inválido.\n");
+		exit(EXIT_FAILURE);
+	}
 
-    // Determina o endereço do diretório raiz e seu tamanho.
-    uint32_t root_address = bpb_froot_addr(bpb);
-    uint32_t root_size = sizeof(struct fat_dir) * bpb->possible_rentries;
+	// Determina o endereço do diretório raiz e seu tamanho.
+	uint32_t root_address = bpb_froot_addr(bpb);
+	uint32_t root_size = sizeof(struct fat_dir) * bpb->possible_rentries;
 
-    // Lê o diretório raiz do disco.
-    struct fat_dir root[root_size];
-    if (read_bytes(fp, root_address, &root, root_size) == RB_ERROR)
-    {
-        error_at_line(EXIT_FAILURE, EIO, __FILE__, __LINE__, "erro ao ler struct fat_dir");
-    }
+	// Lê o diretório raiz do disco.
+	struct fat_dir root[root_size];
+	if (read_bytes(fp, root_address, &root, root_size) == RB_ERROR)
+	{
+		error_at_line(EXIT_FAILURE, EIO, __FILE__, __LINE__, "erro ao ler struct fat_dir");
+	}
 
-    // Encontra a entrada do diretório correspondente ao arquivo.
-    struct far_dir_searchres dir = find_in_root(&root[0], fat16_rname, bpb);
+	// Encontra a entrada do diretório correspondente ao arquivo.
+	struct far_dir_searchres dir = find_in_root(&root[0], fat16_rname, bpb);
 
-    // Verifica se o arquivo foi encontrado.
-    if (dir.found == false)
-    {
-        error(EXIT_FAILURE, 0, "Não foi possível encontrar o arquivo %s.", filename);
-    }
+	// Verifica se o arquivo foi encontrado.
+	if (dir.found == false)
+	{
+		error(EXIT_FAILURE, 0, "Não foi possível encontrar o arquivo %s.", filename);
+	}
 
-    // Marca a entrada como livre.
-    dir.fdir.name[0] = DIR_FREE_ENTRY; // DIR_FREE_ENTRY é definido como 0xE5 que é o valor que indica que a entrada está livre.
+	// Marca a entrada como livre.
+	dir.fdir.name[0] = DIR_FREE_ENTRY; // DIR_FREE_ENTRY é definido como 0xE5 que é o valor que indica que a entrada está livre.
 
-    // Calcula o endereço da entrada do diretório a ser deletada.
-    uint32_t file_address = sizeof(struct fat_dir) * dir.idx + root_address;
+	// Calcula o endereço da entrada do diretório a ser deletada.
+	uint32_t file_address = sizeof(struct fat_dir) * dir.idx + root_address;
 
-    // Escreve a entrada atualizada de volta ao disco.
-    (void) fseek(fp, file_address, SEEK_SET);
-    (void) fwrite(&dir.fdir, sizeof(struct fat_dir), 1, fp);
+	// Escreve a entrada atualizada de volta ao disco.
+	(void) fseek(fp, file_address, SEEK_SET);
+	(void) fwrite(&dir.fdir, sizeof(struct fat_dir), 1, fp);
 
 	/* Após zerar a entrada de diretório, liberar espaço em disco */
 
@@ -250,9 +250,9 @@ void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
 		count++;
 	}
 
-    printf("rm %s, %li clusters apagados.\n", filename, count);
+	printf("rm %s, %li clusters apagados.\n", filename, count);
 
-    return;
+	return;
 }
 
 void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
