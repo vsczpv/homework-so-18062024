@@ -238,7 +238,7 @@ void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
 	size_t   count          = 0;
 
 	/* Continua a zerar os clusters até chegar no End Of File */
-	while (cluster_number < FAT16_USED_LOW)
+	while (cluster_number < FAT16_EOF_LOW)
 	{
 		uint32_t infat_cluster_address = fat_address + cluster_number * sizeof (uint16_t);
 		read_bytes(fp, infat_cluster_address, &cluster_number, sizeof (uint16_t));
