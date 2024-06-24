@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 #include "fat16.h"
 #include "commands.h"
@@ -21,6 +22,8 @@ void usage(char *executable)
 
 int main(int argc, char **argv)
 {
+
+	setlocale(LC_ALL, getenv("LANG"));
 
 	if (argc <= 1)
 		usage(argv[0]),
