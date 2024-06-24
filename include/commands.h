@@ -15,6 +15,17 @@ struct far_dir_searchres
 	int             idx; // Index relativo ao diretório de busca
 };
 
+/*
+ * Esta struct encapsula o resultado de fat16_find_free_cluster()
+ *
+ */
+struct fat16_newcluster_info
+{
+	uint16_t cluster;
+	uint32_t address;
+};
+
+
 /* list files in fat_bpb */
 struct fat_dir *ls(FILE *, struct fat_bpb *);
 
@@ -42,6 +53,11 @@ void cat(FILE* fp, char* filename, struct fat_bpb* bpb);
 /* NOTE - Modificado */
 /* helper function: find specific filename in fat_dir */
 struct far_dir_searchres find_in_root(struct fat_dir *dirs, char *filename, struct fat_bpb *bpb);
+
+/* Procura cluster vazio */
+struct fat16_newcluster_info fat16_find_free_cluster(FILE* fp, struct fat_bpb* bpb);
+
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 ///
 

@@ -19,8 +19,6 @@
  */
 #include <sys/types.h>
 
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-
 /*
  * NOTE - Modificação
  *
@@ -256,16 +254,10 @@ void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
 	return;
 }
 
-struct fat16_newcluster_info
-{
-	uint16_t cluster;
-	uint32_t address;
-};
-
-static struct fat16_newcluster_info fat16_find_free_cluster(FILE* fp, struct fat_bpb* bpb)
+struct fat16_newcluster_info fat16_find_free_cluster(FILE* fp, struct fat_bpb* bpb)
 {
 
-	/* Essa implementação de FAT16 não funciona com discos pequenos. */
+	/* Essa implementação de FAT16 não funciona com discos grandes. */
 	assert(bpb->large_n_sects == 0);
 
 	uint16_t cluster        = 0x0;
@@ -289,7 +281,7 @@ static struct fat16_newcluster_info fat16_find_free_cluster(FILE* fp, struct fat
 void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 {
 
-	/* Busca de diretório e renomeamento explicado em mv() */
+	/* Manipulação de diretório explicado em mv() */
 	char source_rname[FAT16STR_SIZE_WNULL], dest_rname[FAT16STR_SIZE_WNULL];
 
 	bool badname = cstr_to_fat16wnull(source, source_rname)
@@ -320,21 +312,59 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 	struct fat_dir new_dir = dir1.fdir;
 	memcpy(new_dir.name, dest_rname, FAT16STR_SIZE);
 
+	/* Dentry */
+
+	bool dentry_failure = true;
+
+	/* Procura-se uma entrada livre no diretório raíz */
+	for (int i = 0; i < bpb->possible_rentries; i++) if (root[i].name[0] == DIR_FREE_ENTRY || root[i].name[0] == '\0')
+	{
+
+		/* Então calcula-se seu endereço final */
+		uint32_t dest_address = sizeof (struct fat_dir) * i + root_address;
+
+		/* Aplica new_dir ao diretório raiz */
+		(void) fseek (fp, dest_address, SEEK_SET);
+		(void) fwrite
+		(
+			&new_dir,
+			sizeof (struct fat_dir),
+			1,
+			fp
+		);
+
+		dentry_failure = false;
+
+		break;
+	}
+
+	if (dentry_failure)
+		error_at_line(EXIT_FAILURE, ENOSPC, __FILE__, __LINE__, "Não foi possivel alocar uma entrada no diretório raiz.");
+
 	/* Agora é necessário alocar os clusters para o novo arquivo. */
 
 	int count = 0;
 
 	/* Clusters */
 	{
+
+		/*
+		 * Informações de novo cluster
+		 *
+		 * É alocado os clusters de tráz para frente; o último é alocado primeiro,
+		 * primariamente devido a necessidade de seu valor ser FAT16_EOF_HI.
+		 */
 		struct fat16_newcluster_info next_cluster,
 		                             prev_cluster = { .cluster = FAT16_EOF_HI };
 
+		/* Quantos clusters o arquivo necessita */
 		uint32_t cluster_count = dir1.fdir.file_size / bpb->bytes_p_sect / bpb->sector_p_clust + 1;
 
+		/* Aloca-se os clusters, gravando-os na FAT */
 		while (cluster_count--)
 		{
 			prev_cluster = next_cluster;
-			next_cluster = fat16_find_free_cluster(fp, bpb);
+			next_cluster = fat16_find_free_cluster(fp, bpb); /* Busca-se novo cluster */
 
 			(void) fseek (fp, next_cluster.address, SEEK_SET);
 			(void) fwrite(&prev_cluster.cluster, sizeof (uint16_t), 1, fp);
@@ -342,6 +372,7 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 			count++;
 		}
 
+		/* Ao final, o cluster de início é guardado na entrada de diretório. */
 		new_dir.starting_cluster = next_cluster.cluster;
 	}
 
@@ -354,6 +385,8 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 		const uint32_t cluster_width     = bpb->bytes_p_sect * bpb->sector_p_clust;
 
 		size_t bytes_to_copy = new_dir.file_size;
+
+		/* É iterado ambos arquivo fonte e arquivo destino ao mesmo tempo */
 
 		uint16_t source_cluster_number = dir1.fdir.starting_cluster;
 		uint16_t destin_cluster_number = new_dir .starting_cluster;
@@ -368,6 +401,7 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 
 			char filedata[cluster_width];
 
+			/* Le-se da fonte e escreve-se no destino. */
 			(void) read_bytes(fp, source_cluster_address, filedata, copied_in_this_sector);
 			(void) fseek     (fp, destin_cluster_address, SEEK_SET);
 			(void) fwrite    (filedata, sizeof (char), copied_in_this_sector, fp);
@@ -380,24 +414,6 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 			(void) read_bytes(fp, source_next_cluster_address, &source_cluster_number, sizeof (uint16_t));
 			(void) read_bytes(fp, destin_next_cluster_address, &destin_cluster_number, sizeof (uint16_t));
 		}
-	}
-
-	/* Dentry */
-	for (int i = 0; i < bpb->possible_rentries; i++) if (root[i].name[0] == DIR_FREE_ENTRY || root[i].name[0] == '\0')
-	{
-
-		uint32_t dest_address = sizeof (struct fat_dir) * i + root_address;
-
-		(void) fseek (fp, dest_address, SEEK_SET);
-		(void) fwrite
-		(
-			&new_dir,
-			sizeof (struct fat_dir),
-			1,
-			fp
-		);
-
-		break;
 	}
 
 	printf("cp %s → %s, %i clusters copiados.\n", source, dest, count);
