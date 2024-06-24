@@ -34,7 +34,8 @@ Os seguintes comandos foram implementados:
 1. Listar   -- ls
 2. Mover    -- mv
 3. Remover  -- rm
-3. Imprimir -- cat
+4. Copiar   -- cp
+5. Imprimir -- cat
 
 # Exemplos
 
@@ -54,6 +55,12 @@ Para remover um arquivo:
 
 ```
 $ ./obese16 rm texto2.txt disk.img
+```
+
+Para copiar um arquivo:
+
+```
+$ ./obese16 cp texto2.txt novo.txt disk.img
 ```
 
 Para imprimir um arquivo:
