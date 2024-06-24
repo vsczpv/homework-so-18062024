@@ -366,6 +366,9 @@ void cp(FILE *fp, char* source, char* dest, struct fat_bpb *bpb)
 			prev_cluster = next_cluster;
 			next_cluster = fat16_find_free_cluster(fp, bpb); /* Busca-se novo cluster */
 
+			if (next_cluster.cluster == 0x0)
+				error_at_line(EXIT_FAILURE, EIO, __FILE__, __LINE__, "Disco cheio (imagem foi corrompida)");
+
 			(void) fseek (fp, next_cluster.address, SEEK_SET);
 			(void) fwrite(&prev_cluster.cluster, sizeof (uint16_t), 1, fp);
 
