@@ -69,6 +69,7 @@ uint32_t bpb_faddress(struct fat_bpb *);
 uint32_t bpb_froot_addr(struct fat_bpb *);
 uint32_t bpb_fdata_addr(struct fat_bpb *);
 uint32_t bpb_fdata_sector_count(struct fat_bpb *);
+uint32_t bpb_fdata_cluster_count(struct fat_bpb* bpb);
 
 ///
 
@@ -78,6 +79,7 @@ uint32_t bpb_fdata_sector_count(struct fat_bpb *);
 #define RB_ERROR -1
 #define RB_OK     0
 
-#define FAT16_EOF_LOW 0xfff8
+#define FAT16_EOF_LO 0xfff8
+#define FAT16_EOF_HI 0xffff
 
 #endif

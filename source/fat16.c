@@ -28,6 +28,19 @@ uint32_t bpb_fdata_sector_count(struct fat_bpb *bpb)
 	return bpb->large_n_sects - bpb_fdata_addr(bpb) / bpb->bytes_p_sect;
 }
 
+static uint32_t bpb_fdata_sector_count_s(struct fat_bpb* bpb)
+{
+	return bpb->snumber_sect - bpb_fdata_addr(bpb) / bpb->bytes_p_sect;
+}
+
+/* calculate data cluster count */
+uint32_t bpb_fdata_cluster_count(struct fat_bpb* bpb)
+{
+	uint32_t sectors = bpb_fdata_sector_count_s(bpb);
+
+	return sectors / bpb->sector_p_clust;
+}
+
 /*
  * NOTE - Modificação
  * Valores sentinela trocados por macros.
